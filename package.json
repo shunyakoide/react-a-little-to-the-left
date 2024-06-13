@@ -10,12 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.1",
     "@react-spring/web": "^9.7.3",
     "@use-gesture/react": "^10.3.1",
+    "gsap": "^3.12.5",
     "lodash-move": "^1.1.1",
     "lodash.clamp": "^4.0.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "use-sound": "^4.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
