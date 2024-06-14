@@ -30,10 +30,11 @@ const fn =
 
 function Books() {
   const soundConfig = {
-    volume: 0.25,
+    volume: 0.2,
     interrupt: true,
   };
-  const [placementSound] = useSound("./sounds/placement.mp3", {
+  const [bookDrop] = useSound("./sounds/book_drop.mp3", {
+    duration: 1,
     ...soundConfig,
   });
   const [successSound] = useSound("./sounds/success.mp3", {
@@ -66,7 +67,7 @@ function Books() {
     if (!active) {
       document.body.style.cursor = "auto";
       order.current = newOrder;
-      placementSound();
+      bookDrop();
       checkAnswer(newOrder);
     } else {
       document.body.style.cursor = "grabbing";
