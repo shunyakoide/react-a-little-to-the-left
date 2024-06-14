@@ -1,12 +1,17 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useStore } from "../store";
 
 gsap.registerPlugin(useGSAP);
+
+const color = ["#CDD5C6", "#B7BCBF", "#FFE2C3"];
 
 function Curtain() {
   const container = useRef<HTMLDivElement>(null!);
   const tl = useRef<gsap.core.Timeline>();
+
+  const open = useStore((state) => state.open);
 
   const { contextSafe } = useGSAP(
     () => {
@@ -23,7 +28,7 @@ function Curtain() {
             height: "0%",
             transformOrigin: "top",
             stagger: {
-              each: 0.3,
+              each: 0.4,
               from: "end",
             },
           },
@@ -35,7 +40,7 @@ function Curtain() {
             height: "0%",
             transformOrigin: "bottom",
             stagger: {
-              each: 0.3,
+              each: 0.4,
               from: "end",
             },
           },
@@ -46,12 +51,18 @@ function Curtain() {
   );
 
   const startAnimation = contextSafe(() => {
-    tl.current?.play();
+    tl.current?.restart();
   });
 
   useEffect(() => {
     startAnimation();
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      startAnimation();
+    }
+  }, [open, startAnimation]);
 
   return (
     <div
@@ -60,12 +71,20 @@ function Curtain() {
       onClick={startAnimation}
     >
       <div className="curtain curtain-half absolute left-0 top-0 size-full scale-y-0">
-        <div className="curtain-top absolute left-0 top-0 h-1/2 w-full  bg-red-500 " />
-        <div className="curtain-top absolute left-0 top-0 h-1/2 w-full  bg-blue-500 " />
-        <div className="curtain-top absolute left-0 top-0 h-1/2 w-full  bg-green-500 " />
-        <div className="curtain-bottom absolute bottom-0 left-0 h-1/2 w-full  bg-red-500 " />
-        <div className="curtain-bottom absolute bottom-0 left-0 h-1/2 w-full  bg-blue-500 " />
-        <div className="curtain-bottom absolute bottom-0 left-0 h-1/2 w-full  bg-green-500 " />
+        {color.map((c, index) => (
+          <div
+            key={index}
+            className="curtain-top absolute left-0 top-0 h-1/2 w-full"
+            style={{ backgroundColor: c }}
+          />
+        ))}
+        {color.map((c, index) => (
+          <div
+            key={index}
+            className="curtain-bottom absolute bottom-0 left-0 h-1/2 w-full"
+            style={{ backgroundColor: c }}
+          />
+        ))}
       </div>
     </div>
   );

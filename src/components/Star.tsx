@@ -1,19 +1,28 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useStore } from "../store";
 
-function Star() {
+function Stars() {
   const container = useRef<HTMLDivElement>(null!);
   const tl = useRef<gsap.core.Timeline>();
+
+  const open = useStore((state) => state.open);
+  const setOpen = useStore((state) => state.setOpen);
+  const result = useStore((state) => state.result);
+  const correctCount = result.filter((v) => v).length;
 
   const { contextSafe } = useGSAP(
     () => {
       gsap.set(".star", { scale: 0 });
       gsap.set(".dot", { opacity: 0 });
-      gsap.set(".line", { opacity: 0 });
 
       tl.current = gsap
-        .timeline({ paused: true })
+        .timeline({
+          paused: true,
+          delay: 0.5,
+          onComplete: () => setOpen(false),
+        })
         .to(".star", {
           scale: 1,
           ease: "elastic.out(0.3, 0)",
@@ -43,7 +52,7 @@ function Star() {
           "-=1.3"
         )
         .to(
-          ".star",
+          ".star-container",
           {
             y: () => window.innerHeight / 2 + 100,
             duration: 1.6,
@@ -53,51 +62,40 @@ function Star() {
             ease: "elastic.in(0.3, 0)",
           },
           "-=0.5"
-        )
-        .to(
-          ".line",
-          {
-            opacity: 1,
-          },
-          "<"
-        )
-        .to(
-          ".line",
-          {
-            scaleY: 200,
-            transformOrigin: "top",
-            stagger: {
-              each: 0.1,
-              //   from: "end",
-            },
-            duration: 0.8,
-            ease: "sine.in",
-            delay: 1.1,
-          },
-          "<"
-        )
-        .to(
-          ".line",
-          {
-            y: () => window.innerHeight / 2 + 100,
-            duration: 1.5,
-            stagger: {
-              each: 0.3,
-            },
-            ease: "sine.in",
-            delay: 0.1,
-          },
-          "<"
         );
     },
     { scope: container }
   );
 
   const startAnimation = contextSafe(() => {
-    tl.current?.play();
+    tl.current?.restart();
   });
 
-  const DOTS_COUNT = 8;
+  useEffect(() => {
+    if (open) {
+      startAnimation();
+    }
+  }, [open, startAnimation]);
+
+  return (
+    <div
+      ref={container}
+      className="pointer-events-none absolute inset-0 z-20 m-auto flex items-center justify-center gap-24"
+    >
+      <Star type="solid" />
+      {/* FIXME: 装飾が見えない はじめにレンダリングされていないため*/}
+      {correctCount >= 2 ? <Star type="solid" /> : <Star type="line" />}
+    </div>
+  );
+}
+
+const DOTS_COUNT = 8;
+
+type StarProps = {
+  type?: "solid" | "line";
+};
+
+function Star({ type = "solid" }: StarProps) {
   const dots = Array.from({ length: DOTS_COUNT }).map((_, index) => {
     const angle = (360 / DOTS_COUNT) * index;
     return (
@@ -108,19 +106,17 @@ function Star() {
   });
 
   return (
-    <div
-      ref={container}
-      className="pointer-events-none absolute inset-0 z-20 m-auto flex items-center justify-center gap-4"
-    >
-      <div className="star size-36 bg-[url(./stars/star.png)] bg-contain bg-center bg-no-repeat" />
-      <div className="absolute">{dots}</div>
-      <div className="absolute mb-16 flex gap-2">
-        <div className="line h-1 w-2 bg-white" />
-        <div className="line mt-8 h-1 w-2 bg-white" />
-      </div>
-      {/* TODO: another star */}
-      {/* <div className="star size-36 bg-[url(./stars/star-line.png)] bg-contain bg-center bg-no-repeat" /> */}
+    <div className="star-container relative flex size-36 items-center justify-center">
+      {type === "line" ? (
+        <div className="star size-36 bg-[url(./stars/star-line.png)] bg-contain bg-center bg-no-repeat" />
+      ) : (
+        <>
+          <div className="star absolute size-36 bg-[url(./stars/star.png)] bg-contain bg-center bg-no-repeat" />
+          <div className="absolute">{dots}</div>
+        </>
+      )}
     </div>
   );
 }
-export default Star;
+
+export default Stars;

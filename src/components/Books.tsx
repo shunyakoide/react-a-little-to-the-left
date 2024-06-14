@@ -5,9 +5,15 @@ import clamp from "lodash.clamp";
 import swap from "lodash-move";
 import data, { answers } from "../data";
 import useSound from "use-sound";
+import { useStore } from "../store";
 
 //ref: https://codesandbox.io/p/sandbox/spring-draggable-list-0x4l9
 // Sound Effect from Pixabay https://pixabay.com
+
+const soundConfig = {
+  volume: 0.2,
+  interrupt: true,
+};
 
 const fn =
   (order: number[], active = false, originalIndex = 0, curIndex = 0, x = 0) =>
@@ -29,10 +35,6 @@ const fn =
         };
 
 function Books() {
-  const soundConfig = {
-    volume: 0.2,
-    interrupt: true,
-  };
   const [bookDrop] = useSound("./sounds/book_drop.mp3", {
     duration: 1,
     ...soundConfig,
@@ -41,14 +43,29 @@ function Books() {
     ...soundConfig,
   });
 
+  const setOpen = useStore((state) => state.setOpen);
+  const result = useStore((state) => state.result);
+  const setResult = useStore((state) => state.setResult);
+
+  const updateCorrect = (ov: boolean[], nv: boolean[]): boolean[] => {
+    return ov.map((ov, index) => ov || nv[index]);
+  };
+
   const checkAnswer = (array: number[]) => {
     const answer = answers.map((_, index) => {
       return answers[index].every((v, i) => v === array[i]);
     });
-    const isCorrect = answer.some((v) => v === true);
-    console.log(isCorrect, answer, array);
-    if (isCorrect) {
+    const hasCorrectAnswer = answer.some((v) => v === true);
+
+    const newCorrect = updateCorrect(result, answer);
+    console.log(hasCorrectAnswer, answer, array, newCorrect);
+    if (hasCorrectAnswer) {
+      setResult(newCorrect);
       successSound();
+
+      setTimeout(() => {
+        setOpen(true);
+      }, 2000);
     }
   };
 
