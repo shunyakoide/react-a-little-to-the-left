@@ -99,10 +99,6 @@ type StarProps = {
 
 function Star({ type = "solid" }: StarProps) {
   const base = "star absolute size-36 bg-contain bg-center bg-no-repeat";
-  const starStyle = {
-    line: base + " bg-[url(./stars/star-line.png)]",
-    solid: base + " bg-[url(./stars/star.png)]",
-  };
   const dotStyle = {
     line: "hidden",
     solid: "absolute block",
@@ -110,7 +106,12 @@ function Star({ type = "solid" }: StarProps) {
 
   return (
     <div className="star-container relative flex size-36 items-center justify-center">
-      <div className={starStyle[type]} />
+      <div
+        className={base}
+        style={{
+          backgroundImage: `url(${type === "solid" ? "./stars/star.png" : "./stars/star-line.png"})`,
+        }}
+      />
       <div className={dotStyle[type]}>{Dots}</div>
     </div>
   );
