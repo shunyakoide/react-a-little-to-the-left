@@ -10,7 +10,6 @@ function Stars() {
   const open = useStore((state) => state.open);
   const setOpen = useStore((state) => state.setOpen);
   const result = useStore((state) => state.result);
-  const correctCount = result.filter((v) => v).length;
 
   const { contextSafe } = useGSAP(
     () => {
@@ -21,7 +20,9 @@ function Stars() {
         .timeline({
           paused: true,
           delay: 0.5,
-          onComplete: () => setOpen(false),
+          onComplete: () => {
+            setOpen(false);
+          },
         })
         .to(".star", {
           scale: 1,
@@ -32,7 +33,7 @@ function Stars() {
           ".dot",
           {
             opacity: 1,
-            duration: 1,
+            duration: 0,
           },
           "<"
         )
@@ -82,9 +83,13 @@ function Stars() {
       ref={container}
       className="pointer-events-none absolute inset-0 z-20 m-auto flex items-center justify-center gap-24"
     >
-      <Star type="solid" />
-      {/* FIXME: 装飾が見えない はじめにレンダリングされていないため*/}
-      {correctCount >= 2 ? <Star type="solid" /> : <Star type="line" />}
+      {result
+        .sort((x, y) => {
+          return x === y ? 0 : x ? -1 : 1;
+        })
+        .map((v, index) => (
+          <Star key={index} type={v ? "solid" : "line"} />
+        ))}
     </div>
   );
 }
@@ -105,16 +110,20 @@ function Star({ type = "solid" }: StarProps) {
     );
   });
 
+  const base = "star absolute size-36 bg-contain bg-center bg-no-repeat";
+  const starStyle = {
+    line: base + " bg-[url(./stars/star-line.png)]",
+    solid: base + " bg-[url(./stars/star.png)]",
+  };
+  const dotStyle = {
+    line: "hidden",
+    solid: "absolute block",
+  };
+
   return (
     <div className="star-container relative flex size-36 items-center justify-center">
-      {type === "line" ? (
-        <div className="star size-36 bg-[url(./stars/star-line.png)] bg-contain bg-center bg-no-repeat" />
-      ) : (
-        <>
-          <div className="star absolute size-36 bg-[url(./stars/star.png)] bg-contain bg-center bg-no-repeat" />
-          <div className="absolute">{dots}</div>
-        </>
-      )}
+      <div className={starStyle[type]} />
+      <div className={dotStyle[type]}>{dots}</div>
     </div>
   );
 }
