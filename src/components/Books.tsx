@@ -48,27 +48,14 @@ function Books() {
   const setResult = useStore((state) => state.setResult);
   const resetting = useStore((state) => state.reseting);
 
-  const updateResult = (ov: boolean[], nv: boolean[]): boolean[] => {
-    return ov.map((ov, index) => ov || nv[index]);
-  };
-
   const checkAnswer = (array: number[]) => {
     const answer = answers.map((_, index) => {
       return answers[index].every((v, i) => v === array[i]);
     });
     const hasCorrectAnswer = answer.some((v) => v === true);
 
-    const newResult = updateResult(result, answer);
-    console.log(
-      "result",
-      result,
-      "answer",
-      answer,
-      "hasCorrectAnswer",
-      hasCorrectAnswer,
-      "newResult",
-      newResult
-    );
+    const newResult = result.map((old, index) => old || answer[index]);
+
     if (hasCorrectAnswer) {
       successSound();
       setResult(newResult);
