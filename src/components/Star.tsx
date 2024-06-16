@@ -10,6 +10,9 @@ function Stars() {
   const open = useStore((state) => state.open);
   const setOpen = useStore((state) => state.setOpen);
   const result = useStore((state) => state.result);
+  const sortedResult = [...result].sort((x, y) => {
+    return x === y ? 0 : x ? -1 : 1;
+  });
 
   const { contextSafe } = useGSAP(
     () => {
@@ -83,33 +86,18 @@ function Stars() {
       ref={container}
       className="pointer-events-none absolute inset-0 z-20 m-auto flex items-center justify-center gap-24"
     >
-      {result
-        .sort((x, y) => {
-          return x === y ? 0 : x ? -1 : 1;
-        })
-        .map((v, index) => (
-          <Star key={index} type={v ? "solid" : "line"} />
-        ))}
+      {sortedResult.map((v, index) => (
+        <Star key={index} type={v ? "solid" : "line"} />
+      ))}
     </div>
   );
 }
-
-const DOTS_COUNT = 8;
 
 type StarProps = {
   type?: "solid" | "line";
 };
 
 function Star({ type = "solid" }: StarProps) {
-  const dots = Array.from({ length: DOTS_COUNT }).map((_, index) => {
-    const angle = (360 / DOTS_COUNT) * index;
-    return (
-      <div key={index} style={{ rotate: `${angle}deg` }}>
-        <div className="dot absolute h-10 w-2 rounded bg-white" />
-      </div>
-    );
-  });
-
   const base = "star absolute size-36 bg-contain bg-center bg-no-repeat";
   const starStyle = {
     line: base + " bg-[url(./stars/star-line.png)]",
@@ -123,9 +111,19 @@ function Star({ type = "solid" }: StarProps) {
   return (
     <div className="star-container relative flex size-36 items-center justify-center">
       <div className={starStyle[type]} />
-      <div className={dotStyle[type]}>{dots}</div>
+      <div className={dotStyle[type]}>{Dots}</div>
     </div>
   );
 }
+
+const DOTS_COUNT = 8;
+const Dots = Array.from({ length: DOTS_COUNT }).map((_, index) => {
+  const angle = (360 / DOTS_COUNT) * index;
+  return (
+    <div key={index} style={{ rotate: `${angle}deg` }}>
+      <div className="dot absolute h-10 w-2 rounded bg-white" />
+    </div>
+  );
+});
 
 export default Stars;
