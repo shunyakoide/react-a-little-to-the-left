@@ -1,5 +1,6 @@
 import Books from "./components/Books";
 import Curtain from "./components/Curtain";
+import { Overlay } from "./components/Overlay";
 import Reset from "./components/Reset";
 import Stars from "./components/Star";
 
@@ -15,6 +16,7 @@ export default function App() {
       <Stars />
       <Curtain />
       <Books />
+      <Overlay />
     </div>
   );
 }
