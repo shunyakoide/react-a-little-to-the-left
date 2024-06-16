@@ -1,5 +1,6 @@
 import Books from "./components/Books";
 import Curtain from "./components/Curtain";
+import Reset from "./components/Reset";
 import Stars from "./components/Star";
 
 export default function App() {
@@ -10,6 +11,7 @@ export default function App() {
         backgroundColor: "#FBF2ED",
       }}
     >
+      <Reset />
       <Stars />
       <Curtain />
       <Books />

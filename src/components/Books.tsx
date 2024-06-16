@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useSprings, animated, config } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
 import clamp from "lodash.clamp";
@@ -46,8 +46,9 @@ function Books() {
   const setOpen = useStore((state) => state.setOpen);
   const result = useStore((state) => state.result);
   const setResult = useStore((state) => state.setResult);
+  const resetting = useStore((state) => state.reseting);
 
-  const updateCorrect = (ov: boolean[], nv: boolean[]): boolean[] => {
+  const updateResult = (ov: boolean[], nv: boolean[]): boolean[] => {
     return ov.map((ov, index) => ov || nv[index]);
   };
 
@@ -57,11 +58,20 @@ function Books() {
     });
     const hasCorrectAnswer = answer.some((v) => v === true);
 
-    const newCorrect = updateCorrect(result, answer);
-    console.log(hasCorrectAnswer, answer, array, newCorrect);
+    const newResult = updateResult(result, answer);
+    console.log(
+      "result",
+      result,
+      "answer",
+      answer,
+      "hasCorrectAnswer",
+      hasCorrectAnswer,
+      "newResult",
+      newResult
+    );
     if (hasCorrectAnswer) {
-      setResult(newCorrect);
       successSound();
+      setResult(newResult);
 
       setTimeout(() => {
         setOpen(true);
@@ -93,6 +103,19 @@ function Books() {
 
   const containerWidth = data.reduce((acc, item) => acc + item.width, 0);
 
+  useEffect(() => {
+    api.start(fn(order.current));
+  }, [api]);
+
+  useEffect(() => {
+    const resetOrder = (order.current = data.map((_, index) => index));
+    if (resetting) {
+      setTimeout(() => {
+        api.start(fn(resetOrder));
+      }, 500);
+    }
+  }, [api, resetting]);
+
   return (
     <div
       className={"relative flex h-[600px] items-center rounded-sm"}
@@ -118,9 +141,7 @@ function Books() {
               backgroundRepeat: "no-repeat",
             }}
             className="size-full p-6 text-black"
-          >
-            {i}
-          </div>
+          />
         </animated.div>
       ))}
     </div>

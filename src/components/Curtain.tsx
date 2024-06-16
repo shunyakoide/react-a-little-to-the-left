@@ -12,12 +12,13 @@ function Curtain() {
   const tl = useRef<gsap.core.Timeline>();
 
   const open = useStore((state) => state.open);
+  const resetting = useStore((state) => state.reseting);
+  const setResetting = useStore((state) => state.setResetting);
 
   const { contextSafe } = useGSAP(
     () => {
-      console.log("creating timeline");
       tl.current = gsap
-        .timeline()
+        .timeline({ paused: true, onComplete: () => setResetting(false) })
         .to(".curtain", {
           scaleY: "100%",
           delay: 0,
@@ -55,14 +56,10 @@ function Curtain() {
   });
 
   useEffect(() => {
-    startAnimation();
-  }, []);
-
-  useEffect(() => {
-    if (open) {
+    if (open || resetting) {
       startAnimation();
     }
-  }, [open, startAnimation]);
+  }, [open, resetting, startAnimation]);
 
   return (
     <div
