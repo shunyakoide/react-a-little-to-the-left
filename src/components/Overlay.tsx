@@ -27,8 +27,8 @@ export function Overlay() {
           }}
         >
           <a href="https://twitter.com/shunyadezain">X</a>
-          <a href="https://github.com/shunyagithub">github</a>
-          <a href="https://github.com/shunyagithub/react-a-little-to-the-left">
+          <a href="https://github.com/shunyakoide">github</a>
+          <a href="https://github.com/shunyakoide/react-a-little-to-the-left">
             code
           </a>
         </p>
