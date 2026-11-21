@@ -1,4 +1,7 @@
 # React a Little to the Left
+
+English | [日本語](README.ja.md)
+
 I wanted to recreate [A Little To The Left](https://store.steampowered.com/app/1629520/A_Little_to_the_Left) after playing it. 
 
 It's an amazing and relaxing game. I'd recommend playing this game.
