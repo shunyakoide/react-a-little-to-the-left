@@ -6,8 +6,6 @@ It's an amazing and relaxing game. I'd recommend playing this game.
 
 <img width="1687" alt="Screenshot" src="https://github.com/shunyagithub/react-a-little-to-the-left/assets/56504519/1cd0d28b-25ac-4cd6-ba9f-70156c019ab9">
 
-[Demo](https://react-a-little-to-the-left.vercel.app/)
-
 ## Start project
 
 ```bash
